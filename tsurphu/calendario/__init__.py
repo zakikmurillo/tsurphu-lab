@@ -15,6 +15,7 @@ También expone:
 
 - TibetanDateBasic
 - TibetanCalendarBackend (interfaz/Protocolo para backends concretos).
+- HenningBackend (backend basado en Henning, por ahora esqueleto).
 """
 
 from .m2_cal import (
@@ -23,3 +24,5 @@ from .m2_cal import (
     calcular_du_tibetano,
     calcular_fecha_tibetana_basica,
 )
+
+from .backend_henning import HenningBackend
