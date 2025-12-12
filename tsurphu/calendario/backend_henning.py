@@ -16,82 +16,23 @@ Más adelante se rellenará con el algoritmo basado en:
 - Henning, *Kalachakra and the Tibetan Calendar*,
 - Tablas TCG (tcg1309, tcgb1302, RD2018, etc.).
 
-PLAN DE IMPLEMENTACIÓN (mapa de trabajo):
+PLAN DE IMPLEMENTACIÓN (mapa de trabajo, RESUMEN):
 
-Paso 0 – Convenciones de Tsurphu
---------------------------------
-- Usamos el DU_tibetano producido por M2-CAL (ya corregido por amanecer
-  local según la propuesta de Henning).
-- Trabajamos en primera instancia con la variante "tsurphu", que aplica
-  correcciones específicas para Bogotá/local.
+- Paso 0: Convenciones de Tsurphu (ya fijadas en M1/M2).
+- Paso 1: Epoch tibetano EPOCH_TSURPHU.
+- Paso 2: dias_desde_epoch = du_tibetano - EPOCH_TSURPHU.du_tibetano.
+- Paso 3: Resolver año/mes/día lunar a partir de dias_desde_epoch.
+- Paso 4: Añadir ciclo de 60 años, animales y elementos (más adelante).
+- Paso 5: Añadir parkha y mewa (más adelante).
 
-Paso 1 – Epoch tibetano de referencia
--------------------------------------
-- Elegir una fecha tibetana bien establecida (año/mes/día) y su DU_tibetano
-  correspondiente según Henning/TCG.
-- Codificarla como constante, por ejemplo::
-
-    EPOCH_TSURPHU = TibetanEpoch(
-        name="...",
-        du_tibetano=...,
-        anio_tibetano=...,
-        mes_lunar=...,
-        dia_lunar=...,
-        notes="...",
-    )
-
-- Esta elección de epoch será la base para todos los conteos posteriores.
-
-Paso 2 – Contar días desde el epoch
------------------------------------
-- A partir de un du_tibetano cualquiera, calcular::
-
-    dias_desde_epoch = du_tibetano - EPOCH_TSURPHU.du_tibetano
-
-- Este número (entero o con pequeña fracción) se usará para avanzar o retroceder
-  en la secuencia de días lunares tibetanos.
-
-Paso 3 – Modelo de meses y días lunares
----------------------------------------
-- Implementar una función interna que, dado dias_desde_epoch, recorra los meses
-  tibetanos aplicando las reglas de Henning/TCG para:
-
-  - longitud de los meses (normalmente 29/30 días),
-  - inserción de meses bisiestos (duplicados),
-  - días repetidos y omitidos.
-
-- Esta función deberá devolver:
-
-    - año tibetano (número absoluto),
-    - mes lunar (1–12, con marca de bisiesto),
-    - día lunar (1–30),
-    - tipo de día (normal, repetido, omitido).
-
-Paso 4 – Capa de 60 años y animales/elementos
---------------------------------------------
-- A partir del año tibetano absoluto, calcular:
-
-    - rabjung (ciclo de 60 años),
-    - posición dentro del ciclo (1–60),
-    - animal del año,
-    - elemento del año,
-    - género (masculino/femenino) del año.
-
-Paso 5 – Parkha y mewa (futuro)
-------------------------------
-- Definir funciones auxiliares para calcular parkha y mewa del día y del año
-  según las tablas tradicionales.
-- Integrar esos resultados en una estructura más completa (por ejemplo,
-  un TibetanDateFull) cuando el proyecto lo requiera.
-
-Estado actual: este archivo implementa la estructura mínima y define
-un epoch simbólico EPOCH_TSURPHU como marcador de posición. Todas las
-secciones anteriores están pendientes de implementación detallada.
+Estado actual: este archivo define la estructura mínima, un epoch simbólico
+EPOCH_TSURPHU, y el esqueleto de funciones internas para el conteo.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
+from typing import Tuple
 
 from tsurphu.calendario.m2_cal import TibetanDateBasic, TibetanCalendarBackend
 
@@ -103,11 +44,10 @@ from tsurphu.calendario.m2_cal import TibetanDateBasic, TibetanCalendarBackend
 
 @dataclass(frozen=True)
 class TibetanEpoch:
-    """
-    Epoch tibetano de referencia para conteos relativos.
+    """Epoch tibetano de referencia para conteos relativos.
 
     Por ahora usamos este dataclass solo como contenedor de datos.
-    Los valores concretos se rellenarán cuando extraígamos del material
+    Los valores concretos se rellenarán cuando extraigamos del material
     de Henning/TCG la fecha exacta a usar.
     """
 
@@ -133,35 +73,82 @@ EPOCH_TSURPHU = TibetanEpoch(
 )
 
 
+# ---------------------------------------------------------------------------
+# Backend Henning: estructura y funciones internas (esqueleto)
+# ---------------------------------------------------------------------------
+
+
 class HenningBackend(TibetanCalendarBackend):
-    """
-    Backend de calendario tibetano basado en Henning (ESQUELETO).
+    """Backend de calendario tibetano basado en Henning (ESQUELETO).
 
     ATENCIÓN: esta versión NO implementa todavía las fórmulas tibetanas.
-    Simplemente envuelve el DU_tibetano en un TibetanDateBasic sin rellenar
-    año/mes/día. Es equivalente a no pasar backend, pero nos fija la interfaz.
+    De momento, envuelve el DU_tibetano en un TibetanDateBasic con campos
+    de año/mes/día aún vacíos.
     """
 
     def __init__(self, variante: str = "tsurphu") -> None:
-        """
-        `variante` permite, en el futuro, cambiar de "escuela" o ajustes:
+        """`variante` permitirá en el futuro distinguir ajustes de escuela.
 
         - "tsurphu": versión Tsurphu local corregida (Henning + Bogotá).
-        - más adelante se podrían añadir otras variantes si es necesario.
+        - Más variantes se pueden añadir más adelante.
         """
         self.variante = variante
 
-    def from_du_tibetano(self, du_tibetano: float) -> TibetanDateBasic:
+    # --------------------------
+    # Funciones internas (esqueleto)
+    # --------------------------
+
+    def _dias_desde_epoch(self, du_tibetano: float) -> float:
+        """Calcula los días (reales) transcurridos desde EPOCH_TSURPHU.
+
+        Cuando EPOCH_TSURPHU.du_tibetano sea un número real, la fórmula será:
+
+            dias = du_tibetano - EPOCH_TSURPHU.du_tibetano
+
+        Por ahora, como el epoch aún no está fijado (du_tibetano=None),
+        devolvemos simplemente 0.0 y dejamos documentado el lugar donde
+        irá la lógica real.
         """
-        Recibe DU_tibetano (float) y devuelve un TibetanDateBasic.
+        if EPOCH_TSURPHU.du_tibetano is None:
+            return 0.0
+
+        return du_tibetano - EPOCH_TSURPHU.du_tibetano
+
+    def _resolver_anio_mes_dia(self, dias_desde_epoch: float) -> Tuple[int, int, int]:
+        """Resuelve (año tibetano, mes lunar, día lunar) a partir de
+        `dias_desde_epoch`.
+
+        Versión actual (esqueleto): devuelve siempre (0, 0, 0).
+
+        Más adelante aquí se implementará:
+        - el avance/retroceso mes a mes según las tablas de Henning/TCG,
+        - el tratamiento de meses bisiestos (duplicados),
+        - el tratamiento de días repetidos y omitidos.
+        """
+        return 0, 0, 0
+
+    # --------------------------
+    # Interfaz pública requerida por TibetanCalendarBackend
+    # --------------------------
+
+    def from_du_tibetano(self, du_tibetano: float) -> TibetanDateBasic:
+        """Recibe DU_tibetano (float) y devuelve un TibetanDateBasic.
 
         Versión actual:
-        - devuelve solo du_tibetano.
-        - deja anio_tibetano, mes_lunar y dia_lunar como None.
+        - calcula dias_desde_epoch (aunque todavía sin epoch real),
+        - llama a _resolver_anio_mes_dia (que ahora devuelve (0, 0, 0)),
+        - devuelve un TibetanDateBasic con du_tibetano y campos de año/mes/día
+          todavía sin contenido real.
 
-        Más adelante aquí irán:
-        - el conteo desde un epoch tibetano (EPOCH_TSURPHU),
-        - el cálculo de año/mes/día lunar,
-        - los días repetidos/omitidos, etc.
+        Cuando el algoritmo Henning esté implementado, esta función será
+        la puerta de entrada para obtener la fecha tibetana completa.
         """
-        return TibetanDateBasic(du_tibetano=du_tibetano)
+        dias_desde_epoch = self._dias_desde_epoch(du_tibetano)
+        anio, mes, dia = self._resolver_anio_mes_dia(dias_desde_epoch)
+
+        return TibetanDateBasic(
+            du_tibetano=du_tibetano,
+            anio_tibetano=anio if anio != 0 else None,
+            mes_lunar=mes if mes != 0 else None,
+            dia_lunar=dia if dia != 0 else None,
+        )
