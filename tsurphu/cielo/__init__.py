@@ -1,14 +1,22 @@
 """
 Módulo M1-CIELO (Cielo Tsurphu).
 
-Por ahora solo define la interfaz de alto nivel del motor astronómico:
+Interfaz de alto nivel del motor astronómico:
+
+- FechaLocal, Coordenadas
+- to_utc: fecha/hora local + zona horaria → datetime UTC.
 - calcular_du: día universal (día juliano) para un instante dado.
-- to_utc: convertir fecha/hora local + zona horaria a UTC.
+- amanecer_local: hora aproximada de amanecer local para una fecha y coordenadas.
 
 Más adelante se añadirá:
-- amanecer_local
 - posiciones de Sol/Luna/planetas
 - info de eclipses, etc.
 """
 
-from .m1_cielo import calcular_du, to_utc
+from .m1_cielo import (
+    FechaLocal,
+    Coordenadas,
+    to_utc,
+    calcular_du,
+    amanecer_local,
+)
