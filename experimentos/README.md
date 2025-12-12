@@ -84,3 +84,51 @@ En esta fase del proyecto:
 - La fecha concreta aún **no** se ha elegido; este experimento es solo
   un casillero preparado para cuando extraigamos del libro de Henning
   y de las tablas TCG un candidato sólido a epoch de validación.
+
+---
+
+## Experimento 3 – Fundación de Tsurphu (validación de linaje Kagyu)
+
+> Este experimento FUTURO servirá para ver cómo el modelo tibetano de
+> Tsurphu describe un hito central del linaje Kagyu: la fundación del
+> monasterio de Tsurphu como asiento principal de los Karmapas.
+
+### Idea general
+
+- Tomar la fecha histórica de la fundación de Tsurphu como monasterio
+  (sede del 1er Karmapa, Düsum Khyenpa), tal como se documenta en
+  fuentes históricas modernas.
+- Usar el motor Tsurphu para traducir esa fecha gregoriana a:
+  - DU (M1-CIELO),
+  - DU_tibetano (M2-CAL),
+  - fecha tibetana (backend Henning, cuando esté implementado).
+
+### Datos que registraremos (cuando concretemos la fecha exacta)
+
+- Fecha histórica gregoriana (por ejemplo, año 1189, según la
+  reconstrucción historiográfica que adoptemos).
+- Lugar: Tsurphu (Tíbet central), con coordenadas aproximadas.
+- Sistema de calendario: Phugpa/Tsurphu.
+- DU (M1-CIELO) para esa fecha y lugar.
+- DU_tibetano (M2-CAL), con corrección de amanecer local.
+- Fecha tibetana resultante según el backend Henning
+  (año tibetano, mes lunar, día lunar) cuando la lógica esté disponible.
+
+### Objetivo del experimento
+
+1. Observar qué patrón de año/mes/día tibetano asigna el modelo a la
+   fundación de Tsurphu.
+2. Usar este hito como "validación de linaje": comprobar si la
+   estructura de ciclos, elementos y, más adelante, parkha y mewa,
+   ofrece una lectura coherente con el carácter de Tsurphu como
+   corazón del linaje Kagyu.
+3. Mantener esta fecha como caso de prueba simbólico de alto valor,
+   complementario a los experimentos más "técnicos" (como el Año
+   Nuevo tibetano del Experimento 2).
+
+### Estado actual
+
+- La fecha exacta y los detalles calendáricos no se han fijado aún. Este
+  experimento es un contenedor preparado para cuando el backend Henning
+  esté lo suficientemente avanzado como para producir fechas tibetanas
+  completas para eventos históricos.
