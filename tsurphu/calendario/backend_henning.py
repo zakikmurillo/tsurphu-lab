@@ -49,9 +49,22 @@ REPRESENTACIÓN INTERNA DE MESES Y DÍAS (decisión estructural):
   "normales" o "repetidos"; la categoría "omitido" se usará principalmente
   en los cálculos internos al construir la cuadrícula completa del mes.
 
+SECUENCIA INTERNA DE MESES (plan estructural):
+- A partir de EPOCH_TSURPHU, el backend Henning trabajará con una
+  secuencia conceptual de meses tibetanos, cada uno descrito por un
+  objeto TibetanMonthSpec:
+
+    TibetanMonthSpec(numero: int, es_bisiesto: bool, longitud_dias: int, notes: str)
+
+- A partir de dias_desde_epoch, el algoritmo podrá:
+
+  1. Determinar en qué mes de esa secuencia cae el DU_tibetano dado.
+  2. Obtener el offset de días dentro de ese mes.
+  3. Traducirlo a (anio_tibetano, mes_lunar, es_mes_bisiesto, dia_lunar, tipo_dia).
+
 Estado actual: este archivo define la estructura mínima, un epoch simbólico
-EPOCH_TSURPHU, y el esqueleto de funciones internas para el conteo. Todavía
-no hay lógica tibetana fina implementada.
+EPOCH_TSURPHU, el tipo TibetanMonthSpec y el esqueleto de funciones internas
+para el conteo. Todavía no hay lógica tibetana fina implementada.
 """
 
 from __future__ import annotations
@@ -96,6 +109,32 @@ EPOCH_TSURPHU = TibetanEpoch(
         "cálculo exacto a partir de las tablas TCG y del libro de Henning."
     ),
 )
+
+
+# ---------------------------------------------------------------------------
+# Especificación de meses tibetanos
+# ---------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class TibetanMonthSpec:
+    """Especificación estructural de un mes tibetano.
+
+    - numero: número de mes lunar (1..12).
+    - es_bisiesto: True si se trata del mes duplicado (mes bisiesto).
+    - longitud_dias: número de días del mes (normalmente 29 o 30).
+    - notes: campo libre para documentar decisiones o referencias.
+
+    Esta clase se usará internamente en el backend para recorrer la
+    secuencia de meses desde el epoch y determinar, para un
+    `dias_desde_epoch` dado, en qué mes y con qué offset de día
+    nos encontramos.
+    """
+
+    numero: int
+    es_bisiesto: bool
+    longitud_dias: int
+    notes: str = ""
 
 
 # ---------------------------------------------------------------------------
