@@ -62,15 +62,34 @@ SECUENCIA INTERNA DE MESES (plan estructural):
   2. Obtener el offset de días dentro de ese mes.
   3. Traducirlo a (anio_tibetano, mes_lunar, es_mes_bisiesto, dia_lunar, tipo_dia).
 
+MODO DEMO HENNING (año de laboratorio):
+- Para validar la estructura del backend con datos reales de Henning/TCG,
+  este módulo ofrecerá un "modo demo" opcional en el cual:
+
+  - Se usará un único año tibetano de laboratorio, descrito por una
+    constante HENNING_SAMPLE_ANIO y una secuencia MESES_HENNING_SAMPLE
+    (lista de TibetanMonthSpec extraída fielmente de las tablas).
+  - Se interpretará dias_desde_epoch como un desplazamiento relativo al
+    primer día de ese año de laboratorio.
+
+- En este modo demo:
+
+  1. Si dias_desde_epoch está dentro del rango cubierto por
+     MESES_HENNING_SAMPLE, el backend devolverá un año/mes/día tibetano
+     coherente con ese año concreto.
+  2. Fuera de ese rango, el comportamiento se dejará explícitamente
+     sin definir o se devolverá un marcador neutro.
+
 Estado actual: este archivo define la estructura mínima, un epoch simbólico
-EPOCH_TSURPHU, el tipo TibetanMonthSpec y el esqueleto de funciones internas
-para el conteo. Todavía no hay lógica tibetana fina implementada.
+EPOCH_TSURPHU, el tipo TibetanMonthSpec, el modo_demo y el esqueleto de
+funciones internas para el conteo. Todavía no hay lógica tibetana fina
+implementada.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
-from typing import Tuple
+from typing import List, Tuple
 
 from tsurphu.calendario.m2_cal import TibetanDateBasic, TibetanCalendarBackend
 
@@ -138,6 +157,23 @@ class TibetanMonthSpec:
 
 
 # ---------------------------------------------------------------------------
+# Datos de demo Henning (año de laboratorio) - SIN RELLENAR AÚN
+# ---------------------------------------------------------------------------
+
+
+# Año tibetano de laboratorio basado en Henning/TCG.
+# Más adelante se fijará a un número concreto (por ejemplo, 2137, etc.),
+# una vez se seleccione el año de referencia en los textos.
+HENNING_SAMPLE_ANIO: int | None = None
+
+
+# Secuencia de meses para el año de laboratorio Henning.
+# Esta lista se rellenará, más adelante, con objetos TibetanMonthSpec
+# extraídos de las tablas de Henning/TCG para un año concreto.
+MESES_HENNING_SAMPLE: List[TibetanMonthSpec] = []
+
+
+# ---------------------------------------------------------------------------
 # Backend Henning: estructura y funciones internas (esqueleto)
 # ---------------------------------------------------------------------------
 
@@ -150,14 +186,20 @@ class HenningBackend(TibetanCalendarBackend):
     de año/mes/día aún vacíos.
     """
 
-    def __init__(self, variante: str = "tsurphu") -> None:
+    def __init__(self, variante: str = "tsurphu", modo_demo: bool = False) -> None:
         """`variante` permitirá en el futuro distinguir ajustes de escuela.
 
         - "tsurphu": versión Tsurphu local corregida (Henning + Bogotá).
         - Más variantes se pueden añadir más adelante.
+
+        `modo_demo` activa el uso de un año de laboratorio Henning, con
+        meses tomados de MESES_HENNING_SAMPLE. Mientras esta estructura
+        no esté rellenada, el modo demo se comportará igual que el modo
+        normal (sin resolver año/mes/día).
         """
 
         self.variante = variante
+        self.modo_demo = modo_demo
 
     # --------------------------
     # Funciones internas (esqueleto)
@@ -186,6 +228,24 @@ class HenningBackend(TibetanCalendarBackend):
 
         BOCETO DEL ALGORITMO (aún sin implementar):
 
+        MODO DEMO (cuando self.modo_demo es True y los datos están
+        disponibles):
+
+        1. Interpretar dias_desde_epoch como desplazamiento relativo al
+           primer día del año de laboratorio HENNING_SAMPLE_ANIO.
+        2. Recorrer MESES_HENNING_SAMPLE (lista de TibetanMonthSpec),
+           restando longitud_dias hasta encontrar el mes donde cae
+           dias_desde_epoch.
+        3. El valor restante indicará el día (offset) dentro del mes:
+
+               dia_index = int(dias_restantes)
+               dia_lunar = dia_index + 1
+
+        4. El año tibetano devuelto será HENNING_SAMPLE_ANIO.
+        5. El número de mes tibetano será mes_spec.numero.
+
+        MODO GENERAL (futuro, fuera del modo demo):
+
         1. Inicializar un contador de años tibetanos y una secuencia de
            meses (lista de TibetanMonthSpec) relativa a EPOCH_TSURPHU.
         2. Recorrer la secuencia de meses, restando longitud_dias de
@@ -206,6 +266,8 @@ class HenningBackend(TibetanCalendarBackend):
         tablas de Henning/TCG.
         """
 
+        # Mientras no haya datos reales de demo ni lógica general, este
+        # método se limita a devolver un marcador neutro.
         return 0, 0, 0
 
     # --------------------------
