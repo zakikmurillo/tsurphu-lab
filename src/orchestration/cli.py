@@ -38,7 +38,13 @@ def _normalize_tibetan_year_json(data: Dict[str, Any]) -> Dict[str, Any]:
     element = data.get("element")
     if isinstance(element, str):
         data["element"] = element.lower()
+
+    parkha = data.get("parkha")
+    if isinstance(parkha, str):
+        data["parkha"] = parkha.lower()
+
     return data
+
 
 
 def cmd_tibetan_year(args: argparse.Namespace) -> int:
