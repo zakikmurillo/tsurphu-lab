@@ -1,0 +1,23 @@
+# 7x-3 — Reglas: Política de Precedencia (MVP)
+
+schema_version: 1
+precedence_policy:
+  # Idea central: no saturar. La profundidad depende de la importancia del evento.
+  event_importance_levels: [low, medium, high]
+
+  default_depth_by_importance:
+    low:   [weekday_profile]
+    medium: [weekday_profile, animal_day_profile, personal_element_relation]
+    high:  [weekday_profile, animal_day_profile, personal_element_relation, divination_layer, special_practice_layer]
+
+  conflict_resolution:
+    # Si algo está explícitamente en 'avoid' en la capa seleccionada, domina sobre 'favorable'.
+    rule_avoid_dominates: true
+    # Si el evento es 'high', pedir confirmación/diagnóstico por divinación cuando hay señales mixtas fuertes.
+    rule_divination_on_strong_conflict: true
+
+
+
+evidence:
+  - source_id: norbu_key_tibetan_calendar
+    locator_hint: "Key — priorizar lo importante y evitar esclavitud del calendario"

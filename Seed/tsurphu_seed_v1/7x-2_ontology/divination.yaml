@@ -1,0 +1,33 @@
+# 7x-2 — Ontología: Divinación elemental (byung-rtsis) — White Beryl
+
+schema_version: 1
+byung_rtsis:
+  core_symbol: turtle_shell
+  turtle_shell_aspects:
+    - aspect_id: natural_state
+      tibetan: "gnas-pa'i rus-sbal"
+      label_es: "Tortuga del estado natural"
+
+    - aspect_id: material_world
+      tibetan: "chags-pa'i rus-sbal"
+      label_es: "Tortuga del mundo material"
+
+    - aspect_id: sentient_existence
+      tibetan: "srid-pa'i rus-sbal"
+      label_es: "Tortuga de la existencia de seres"
+
+    - aspect_id: symbolic_emanation
+      tibetan: "sprul-pa'i rus-sbal"
+      label_es: "Tortuga de emanación simbólica"
+
+    - aspect_id: exegesis_or_incision
+      tibetan: "bshad-pa'i rus-sbal / bshas-pa'i rus-sbal"
+      label_es: "Tortuga de exégesis o incisión"
+
+  notes: "Este archivo define el esqueleto. Los métodos específicos (tiradas/lecturas) se añaden en 7x-3."
+
+
+
+evidence:
+  - source_id: white_beryl_elemental_divination
+    locator_hint: "White Beryl — rus-sbal (tortuga) y sus 5 aspectos"

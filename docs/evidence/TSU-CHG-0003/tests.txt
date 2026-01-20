@@ -1,0 +1,14 @@
+﻿py : test_mewa_examples (test_year_cycles.TestYearCycles.test_mewa_examples) ... ok
+En línea: 1 Carácter: 1
++ py -m unittest discover -s tests -p "test_*.py" -v 2>&1 | Out-File -E ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (test_mewa_examp...xamples) ... ok:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError
+ 
+test_parkha_mapping_non5 (test_year_cycles.TestYearCycles.test_parkha_mapping_non5) ... ok
+test_tibetan_year_smoke (test_year_cycles.TestYearCycles.test_tibetan_year_smoke) ... ok
+
+----------------------------------------------------------------------
+Ran 3 tests in 0.000s
+
+OK

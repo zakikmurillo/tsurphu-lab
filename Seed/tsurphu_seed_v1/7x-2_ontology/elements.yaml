@@ -1,0 +1,31 @@
+# 7x-2 — Ontología: Elementos y relaciones
+
+schema_version: 1
+# La relación se usa como modificador personal: elemento del día vs elemento del año de nacimiento.
+# mother = muy favorable; child = neutral; friend = favorable; enemy = desfavorable.
+
+elements: [wood, fire, earth, metal, water]
+
+relation_types:
+  mother:
+    label_es: "Madre"
+    weight: +2
+    meaning_es: "Muy favorable; ayuda el progreso"
+  child:
+    label_es: "Hijo"
+    weight: 0
+    meaning_es: "Bastante neutral"
+  friend:
+    label_es: "Amigo"
+    weight: +1
+    meaning_es: "Favorable; ofrece ayuda"
+  enemy:
+    label_es: "Enemigo"
+    weight: -2
+    meaning_es: "Desfavorable; oposición"
+
+
+
+evidence:
+  - source_id: norbu_key_tibetan_calendar
+    locator_hint: "Key — relación elemento del día vs elemento del año de nacimiento (mother/child/friend/enemy)"

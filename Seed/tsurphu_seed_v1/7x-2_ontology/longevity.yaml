@@ -1,0 +1,20 @@
+# 7x-2 — Ontología: Longevidad / bla (semilla)
+
+schema_version: 1
+life_span:
+  concepts:
+    - concept_id: untimely_death
+      label_es: "Muerte no oportuna (dus min 'chi ba)"
+      notes: "Semilla: se ampliará con factores de cálculo y protocolos de mitigación."
+
+  practices_seed:
+    - practice_id: bla_gugs_tshe_gugs
+      label_es: "Ritual bla ’gugs tshe ’gugs (recuperar bla + longevidad)"
+      type: ritual
+      notes: "Documentado etnográficamente; se usa cuando se sospecha pérdida de bla confirmada por divinación."
+
+
+
+evidence:
+  - source_id: gerke_long_lives
+    locator_hint: "Gerke — bla ’gugs tshe ’gugs y repertorios de longevidad / muerte no oportuna"

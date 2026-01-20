@@ -1,0 +1,25 @@
+# 7x-2 — Ontología: Mandalas (Semilla)
+
+schema_version: 1
+mandala_collections:
+  - collection_id: mitro_one_hundred_108
+    label_es: "Mitro’s One Hundred (108 mandalas)"
+    tradition: indian_tantric_to_tibet
+    count_claimed: 108
+    notes: "Semilla de catálogo; se expandirá con el índice completo y metadatos por mandala."
+
+  - collection_id: vajravali
+    label_es: "Vajravali (Garland of vajras)"
+    tradition: abhayakaragupta
+    notes: "Compendio; tamaño depende de la versión (28/42/55 mandalas)."
+
+mandala_objects_seed:
+  # Ejemplos mínimos (se completarán con el índice completo de Tanaka)
+  - mandala_id: M-UNKNOWN-PLACEHOLDER
+    label_es: "(placeholder) Mandala por completar"
+    collection_id: mitro_one_hundred_108
+    tantra_class: unknown
+    central_deity: unknown
+    evidence:
+      - source_id: tanaka_mitrayogin_108
+        locator: "Intro: definición de 'Mitra’s One Hundred'"

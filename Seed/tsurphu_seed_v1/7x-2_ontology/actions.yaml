@@ -1,0 +1,180 @@
+# 7x-2 — Ontología: Taxonomía de Acciones
+# Basada en listas operativas del calendario tibetano (Key, Namkhai Norbu).
+
+schema_version: 1
+action_taxonomy:
+  - action_id: become_monk
+    label_es: "Hacerse monje / ordenación"
+    category: spiritual
+    synonyms_es: ["ordenarse", "tomar los hábitos"]
+
+  - action_id: give_receive_teachings
+    label_es: "Dar/recibir enseñanzas"
+    category: spiritual
+    synonyms_es: ["transmisión", "instrucción espiritual"]
+
+  - action_id: initiations_sacraments_vows
+    label_es: "Iniciaciones / sacramentos / tomar votos"
+    category: spiritual
+    synonyms_es: ["wang", "samaya", "votos"]
+
+  - action_id: build_mandala
+    label_es: "Construir / dibujar un mandala"
+    category: ritual
+    synonyms_es: ["mandala ritual", "trazar mandala"]
+
+  - action_id: fire_rituals
+    label_es: "Rituales de fuego (homa)"
+    category: ritual
+    synonyms_es: ["homa", "sbyin sreg"]
+
+  - action_id: mantra_practice
+    label_es: "Práctica de mantra"
+    category: spiritual
+    synonyms_es: ["recitación", "japa"]
+
+  - action_id: divination_mo
+    label_es: "Divinación (Mo, etc.)"
+    category: divination
+    synonyms_es: ["mo", "consulta oracular"]
+
+  - action_id: astrological_calculations
+    label_es: "Cálculos astrológicos"
+    category: astrology
+    synonyms_es: ["cálculo de efemérides", "rtsis"]
+
+  - action_id: prepare_medicines
+    label_es: "Preparar medicinas"
+    category: medical
+    synonyms_es: ["farmacia", "preparación de remedios"]
+
+  - action_id: bloodletting
+    label_es: "Sangría"
+    category: medical
+    synonyms_es: ["flebotomía"]
+
+  - action_id: moxa
+    label_es: "Moxa"
+    category: medical
+    synonyms_es: ["moxibustión"]
+
+  - action_id: marriage
+    label_es: "Casarse"
+    category: social
+    synonyms_es: ["boda"]
+
+  - action_id: wear_new_clothes
+    label_es: "Estrenar ropa / ponerse ropa nueva"
+    category: social
+    synonyms_es: ["estrenar"]
+
+  - action_id: sow_plant
+    label_es: "Sembrar / plantar"
+    category: livelihood
+    synonyms_es: ["siembra", "plantar árboles", "plantar flores"]
+
+  - action_id: develop_science_lecture
+    label_es: "Desarrollar ciencia / dar conferencia (uso del intelecto)"
+    category: intellectual
+    synonyms_es: ["conferencia filosófica", "investigación"]
+
+  - action_id: build_house_home_work
+    label_es: "Construir casa / trabajos del hogar"
+    category: livelihood
+    synonyms_es: ["obras", "reparar", "fundaciones"]
+
+  - action_id: move_into_new_house
+    label_es: "Mudarse / tomar residencia en casa nueva"
+    category: livelihood
+    synonyms_es: ["estrenar casa"]
+
+  - action_id: long_journey_application
+    label_es: "Aplicar / iniciar viaje importante"
+    category: travel
+    synonyms_es: ["viaje largo", "salida importante"]
+
+  - action_id: commerce
+    label_es: "Comercio"
+    category: livelihood
+    synonyms_es: ["negocio", "comprar/vender"]
+
+  - action_id: iron_metal_work
+    label_es: "Trabajo con hierro y metal"
+    category: craft
+    synonyms_es: ["herrería", "metalurgia"]
+
+  - action_id: exhibition_celebration_agreement
+    label_es: "Exhibición / celebración / acuerdo"
+    category: social
+    synonyms_es: ["evento", "firmar acuerdo"]
+
+  - action_id: war_army
+    label_es: "Guerra / liderar ejército"
+    category: conflict
+    synonyms_es: ["ir a la guerra"]
+
+  - action_id: take_oath
+    label_es: "Tomar juramento"
+    category: legal
+    synonyms_es: ["juramentarse"]
+
+  - action_id: funeral
+    label_es: "Funeral"
+    category: death
+    synonyms_es: ["ritos funerarios"]
+
+  - action_id: build_roof
+    label_es: "Construir el techo de una casa"
+    category: livelihood
+    synonyms_es: ["techar"]
+
+  - action_id: prison_event
+    label_es: "Ir a prisión (evento)"
+    category: legal
+    synonyms_es: ["encarcelamiento"]
+
+  - action_id: artistic_activities
+    label_es: "Actividades artísticas"
+    category: creative
+    synonyms_es: ["arte", "producción artística"]
+
+  - action_id: send_away_animals
+    label_es: "Enviar/trasladar animales (despedir ganado)"
+    category: daily_life
+    synonyms_es: ["sacar animales", "despachar animales"]
+
+  - action_id: public_deeds
+    label_es: "Actos públicos / asuntos públicos"
+    category: social
+    synonyms_es: ["acto público", "gestión pública"]
+
+  - action_id: magic_actions
+    label_es: "Acciones mágicas / hechicería"
+    category: ritual
+    synonyms_es: ["magia", "hechizo"]
+
+  - action_id: digging
+    label_es: "Cavar / excavar"
+    category: construction
+    synonyms_es: ["excavar", "abrir huecos"]
+
+  - action_id: earth_contact
+    label_es: "Contacto intenso con tierra"
+    category: construction
+    synonyms_es: ["remover tierra", "tierra"]
+
+  - action_id: horse_racing
+    label_es: "Carreras o competencia de caballos"
+    category: travel
+    synonyms_es: ["carrera de caballos"]
+
+  - action_id: blood_flesh_contact
+    label_es: "Contacto con sangre/carne"
+    category: medical
+    synonyms_es: ["sangre", "carne"]
+
+
+
+evidence:
+  - source_id: norbu_key_tibetan_calendar
+    locator_hint: "Key — listas de acciones favorables/desfavorables por día"

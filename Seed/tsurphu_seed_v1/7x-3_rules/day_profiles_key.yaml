@@ -1,0 +1,59 @@
+# 7x-3 — Reglas: Perfiles de día (semilla) desde el Key
+
+schema_version: 1
+weekday_profiles:
+  thursday:
+    labels: ["Bodhisattva Day", "spiritual day"]
+    favorable_actions:
+      - become_monk
+      - initiations_sacraments_vows
+      - give_receive_teachings
+      - build_mandala
+      - fire_rituals
+      - mantra_practice
+      - marriage
+      - wear_new_clothes
+      - sow_plant
+      - develop_science_lecture
+      - prepare_medicines
+      - bloodletting
+      - moxa
+      - divination_mo
+      - astrological_calculations
+      - build_house_home_work
+      - move_into_new_house
+      - long_journey_application
+      - commerce
+      - iron_metal_work
+      - exhibition_celebration_agreement
+
+    avoid_actions:
+      - war_army
+      - take_oath
+      - funeral
+      - build_roof
+      - send_away_animals
+      - prison_event
+      - artistic_activities
+
+animal_day_avoid_rules:
+  tiger:
+    avoid: ["public_deeds"]
+  monkey:
+    avoid: ["public_deeds"]
+  bird:
+    avoid: ["magic_actions"]
+  hare:
+    avoid: ["magic_actions"]
+  dog:
+    avoid: ["war_army"]
+  dragon:
+    avoid: ["war_army"]
+  boar:
+    avoid: ["digging", "earth_contact"]
+  snake:
+    avoid: ["digging", "earth_contact"]
+  mouse:
+    avoid: ["horse_racing", "blood_flesh_contact"]
+  horse:
+    avoid: ["horse_racing", "blood_flesh_contact"]

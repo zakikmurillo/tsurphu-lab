@@ -1,0 +1,7 @@
+ObjectID,Nombre,Estrato_7x,Dueño,MetaAgent,Sensibilidad,Evidencia,Ruta
+TSU-OBJ-0001,Documento Maestro,7x-L7,Zakik,editar,P1,doc,/docs/master.md
+TSU-OBJ-0003,Object Ledger,7x-L7,Engineer,editar,P1,csv,/docs/object-ledger.csv
+TSU-OBJ-0004,Spec ChangeSetPacket-1,7x-L7,Engineer,editar,P1,doc,/docs/changesetpacket-1.md
+TSU-OBJ-0016,Modo Clínico,7x-L1,Zakik,editar,P2,doc,/docs/modes/clinical.md
+TSU-OBJ-0017,Modo Ritual,7x-L1,Zakik,editar,P2,doc,/docs/modes/ritual.md
+TSU-OBJ-0021,Audit Trail,7x-L7,SuperAdminTop,leer,P2,logs,/src/audit/audit-log.jsonl

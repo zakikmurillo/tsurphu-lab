@@ -1,0 +1,8 @@
+﻿__pycache__/
+*.pyc
+.venv/
+.env
+.env.*
+/data/clinical/**
+!/data/clinical/.keep
+/secrets/**

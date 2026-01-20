@@ -1,0 +1,21 @@
+{
+  "timestamp_utc": "2026-01-13T18:14:45Z",
+  "input": {
+    "name": "Patricia",
+    "birth_date": "1990-11-02",
+    "birth_time": "20:30",
+    "place": "Medellín"
+  },
+  "engine": {
+    "version": "sliceA-0.2",
+    "tibetan_year_engine": "tibetan_year.py"
+  },
+  "tibetan": {
+    "year_animal": "Horse",
+    "element": "Metal",
+    "mewa": 4,
+    "parkha": "Zon"
+  },
+  "interpretation": "Pipeline demo + año (animal/elemento) calculado. Mewa/Parkha aún por tabla validada.",
+  "sources_ref": []
+}

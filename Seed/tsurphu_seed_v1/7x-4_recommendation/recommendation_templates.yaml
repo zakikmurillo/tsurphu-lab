@@ -1,0 +1,15 @@
+# 7x-4 — Plantillas explicables de recomendación (Outer/Inner/Other)
+
+schema_version: 1
+templates:
+  - template_id: outer_inner_other_explainable
+    language: es
+    text: |
+      **Outer (contexto):** {outer_signals}
+      **Inner (persona/caso):** {inner_signals}
+      **Other (método):** {other_methods}
+
+      **Recomendación:** {recommendation}
+      **Evitar:** {avoid}
+      **Por qué:** {justification}
+      **Trazabilidad:** {trace}

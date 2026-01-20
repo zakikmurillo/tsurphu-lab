@@ -1,0 +1,34 @@
+# 7x-1 — Fuentes & Evidencia
+# Cada fuente tiene un `source_id` estable para apuntar desde reglas/ontología.
+
+schema_version: 1
+sources:
+  - source_id: henning_kalachakra_calendar
+    short: Henning — Kalachakra and the Tibetan Calendar
+    type: book
+    notes: "Marco outer/inner/other y encuadre Kalachakra como 'wheel/cycle of time'."
+
+  - source_id: norbu_key_tibetan_calendar
+    short: Namkhai Norbu — Key for Consulting the Tibetan Calendar
+    type: book
+    notes: "Listas operativas por día de la semana / animal; relación elemento personal↔elemento del día; advertencias de uso."
+
+  - source_id: white_beryl_elemental_divination
+    short: White Beryl — Elemental Divination (byung-rtsis)
+    type: book
+    notes: "Marco de divinación elemental; tortuga (rus-sbal) como base y 5 aspectos."
+
+  - source_id: brauen_mandala
+    short: Brauen — Mandala Sacred Circle in Tibetan Buddhism
+    type: book
+    notes: "Outer/inner/other (Kalachakra) + ciclos/compendios de mandalas (Vajravali, Mitro's One Hundred)."
+
+  - source_id: tanaka_mitrayogin_108
+    short: Tanaka — Mitrayogin’s 108 Mandalas
+    type: book
+    notes: "Contexto histórico y definición: 108 mandalas = 'Mitra’s One Hundred'."
+
+  - source_id: gerke_long_lives
+    short: Gerke — Long Lives and Untimely Deaths
+    type: book
+    notes: "Longevidad, 'untimely death', bla (pérdida/recuperación) y ritual bla ’gugs tshe ’gugs."

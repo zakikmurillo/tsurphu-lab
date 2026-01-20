@@ -1,0 +1,15 @@
+# 7x-6 — Auditoría: Stub del ChangeSetPacket-1
+# (Se reemplazará por el formato canónico definido por tu patch v4.13.)
+
+schema_version: 1
+changeset_packet_1:
+  packet_id: "CHG-PLACEHOLDER"
+  created_at: "YYYY-MM-DDTHH:MM:SSZ"
+  author: "<user|meta-agent>"
+  intent: "Describe qué se cambió y por qué"
+  changes:
+    - target: "path/to/file.yaml"
+      op: "edit"
+      summary: "Qué cambió"
+      evidence_added: []
+      evidence_removed: []
