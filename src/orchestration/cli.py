@@ -1,8 +1,49 @@
 import argparse
+import json
+from typing import Any, Dict
 
 from engines.tibetan_year import tibetan_year
 
-def main(argv=None) -> int:
+
+def _tibetan_year_to_dict(obj: Any) -> Dict[str, Any]:
+    """
+    Convert the TibetanYear return value into a JSON-serializable dict.
+    Works for NamedTuple, dataclass, or plain objects.
+    """
+    # NamedTuple
+    if hasattr(obj, "_asdict"):
+        return obj._asdict()  # type: ignore[attr-defined]
+
+    # dataclass
+    try:
+        import dataclasses
+
+        if dataclasses.is_dataclass(obj):
+            return dataclasses.asdict(obj)
+    except Exception:
+        pass
+
+    # plain object
+    if hasattr(obj, "__dict__"):
+        return dict(obj.__dict__)
+
+    # last resort
+    return {"value": str(obj)}
+
+
+def cmd_tibetan_year(args: argparse.Namespace) -> int:
+    ty = tibetan_year(args.year)
+
+    if args.json:
+        data = _tibetan_year_to_dict(ty)
+        print(json.dumps(data, ensure_ascii=False, indent=2, sort_keys=True))
+    else:
+        print(ty)
+
+    return 0
+
+
+def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(prog="tsurphu")
     sub = parser.add_subparsers(dest="cmd", required=True)
 
@@ -10,17 +51,21 @@ def main(argv=None) -> int:
         "tibetan-year",
         help="Compute Tibetan year attributes for a Gregorian year",
     )
-    p_ty.add_argument("year", type=int, help="Gregorian year (e.g., 2025)")
+    p_ty.add_argument("year", type=int, help="Gregorian year (e.g. 2025)")
+    p_ty.add_argument(
+        "--json",
+        action="store_true",
+        help="Output JSON instead of the Python repr",
+    )
+    p_ty.set_defaults(func=cmd_tibetan_year)
 
+    return parser
+
+
+def main(argv=None) -> int:
+    parser = build_parser()
     args = parser.parse_args(argv)
-
-    if args.cmd == "tibetan-year":
-        print(tibetan_year(args.year))
-        return 0
-
-    # Fallback (should not happen)
-    parser.print_help()
-    return 1
+    return int(args.func(args))
 
 
 if __name__ == "__main__":
