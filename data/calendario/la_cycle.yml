@@ -1,0 +1,63 @@
+la_cycle:
+  1:
+    male: "sole_left_foot"
+    female: "sole_right_foot"
+  2:
+    all: "ankles"
+  3:
+    all: "inner_thighs"
+  4:
+    all: "waistline"
+  5:
+    all: "inside_mouth"
+  6:
+    all: "chest"
+  7:
+    all: "back"
+  8:
+    all: "palms"
+  9:
+    all: "liver"
+  10:
+    all: "waistline"
+  11:
+    all: "nose"
+  12:
+    all: "stomach"
+  13:
+    all: "shoulder_blades"
+  14:
+    all: "blood_vessel_above_thumbs"
+  15:
+    all: "whole_body"
+  16:
+    all: "neck"
+  17:
+    all: "throat"
+  18:
+    all: "pit_of_stomach"
+  19:
+    all: "ankles"
+  20:
+    male: "sole_right_foot"
+    female: "sole_left_foot"
+  21:
+    all: "big_toe"
+  22:
+    all: "left_shoulder_blade"
+  23:
+    all: "liver"
+  24:
+    all: "palms"
+  25:
+    all: "tongue"
+  26:
+    all: "knees"
+  27:
+    all: "knees"
+  28:
+    all: "sexual_organs"
+  29:
+    all: "pupils"
+  30:
+    all: "whole_body"
