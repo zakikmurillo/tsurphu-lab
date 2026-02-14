@@ -56,3 +56,7 @@ dist/
 # Python caches
 __pycache__/
 .pytest_cache/
+
+# runtime audit log
+src/audit/audit-log.jsonl
+
