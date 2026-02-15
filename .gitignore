@@ -60,3 +60,9 @@ __pycache__/
 # runtime audit log
 src/audit/audit-log.jsonl
 
+# --- Local artifacts (do not commit) ---
+_chat_exports/
+_chat_exports*.zip
+src/engines/*.bak*
+tests/calendario/*.bak
+tools/patch_*.py
