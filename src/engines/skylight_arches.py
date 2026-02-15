@@ -122,10 +122,10 @@ def parse_fixture_text(text: str) -> SkylightFixture:
     fx = SkylightFixture(
         span_start=span_start,
         span_end=span_end,
-        padens=frozenset(buckets["padens"]),
-        lutheps=frozenset(buckets["lutheps"]),
-        nyinaks=frozenset(buckets["nyinaks"]),
-        yenkongs=frozenset(buckets["yenkongs"]),
+        padens=tuple(buckets["padens"]),
+        lutheps=tuple(buckets["lutheps"]),
+        nyinaks=tuple(buckets["nyinaks"]),
+        yenkongs=tuple(buckets["yenkongs"]),
     )
     _validate_fixture(fx)
     return fx
