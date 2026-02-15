@@ -61,8 +61,16 @@ __pycache__/
 src/audit/audit-log.jsonl
 
 # --- Local artifacts (do not commit) ---
+# Chat exports (local)
 _chat_exports/
 _chat_exports*.zip
-src/engines/*.bak*
+__chat_exports/
+__chat_exports*.zip
+
+# Backups
+*.bak
+src/engines/*.bak
 tests/calendario/*.bak
+
+# Temporary patch scripts
 tools/patch_*.py
