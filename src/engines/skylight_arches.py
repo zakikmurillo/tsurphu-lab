@@ -1,201 +1,187 @@
 ﻿from __future__ import annotations
 
-"""
-Skylight Arches (Tsur/Tsurlug) — data-driven lookup (v0)
-
-Estado actual del proyecto:
-- Tenemos un set de fechas "oráculo" publicado por Karma Kagyu Calendar
-  para 2025-03-01 .. 2026-02-28 (padens/lutheps/nyinaks/yenkongs).
-- Aún NO tenemos (en este módulo) el algoritmo formal para derivarlo desde
-  el cómputo calendárico tibetano; por ahora hacemos lookup por fixture.
-
-Este módulo:
-- Carga el fixture YAML-like (sin dependencia de PyYAML).
-- Permite clasificar una fecha gregoriana como uno de los grupos conocidos.
-
-Cuando tengamos reglas/algoritmo:
-- Este módulo se convierte en "regression oracle" y/o fallback,
-  y la función `classify_date()` se reimplementa algorítmicamente.
-"""
-
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import date
 from functools import lru_cache
 from pathlib import Path
 import re
-from typing import Iterable
-
-
-_YEAR_SPAN_RE = re.compile(r'^\s*year_span\s*:\s*"(.*?)"\s*$')
-_KEY_RE = re.compile(r'^\s*([A-Za-z0-9_-]+)\s*:\s*$')
-_DATE_RE = re.compile(r'^\s*-\s*(\d{4}-\d{2}-\d{2})\s*$')
-_ISO_DATE_RE = re.compile(r'^\d{4}-\d{2}-\d{2}$')
+from typing import Dict, Iterable, Optional, Set
 
 
 class FixtureParseError(ValueError):
-    pass
+    """Error al parsear el fixture (YAML simple)."""
+
+
+# Aceptamos keys tipo: padens, year_span, nyinaks, etc.
+_GROUP_RE = re.compile(r"^([A-Za-z0-9_\-]+):\s*$")
+_ITEM_RE = re.compile(r"^\s*-\s*(\d{4}-\d{2}-\d{2})\s*$")
+_META_RE = re.compile(r"^([A-Za-z0-9_\-]+):\s*(.+)\s*$")
+
+# year_span: "YYYY-MM-DD_to_YYYY-MM-DD"
+_SPAN_RE = re.compile(r"^(\d{4}-\d{2}-\d{2})_to_(\d{4}-\d{2}-\d{2})$")
 
 
 @dataclass(frozen=True)
-class SkylightFixture:
+class Fixture:
+    """
+    Representa el fixture ya parseado.
+
+    Requisitos por tests:
+    - fx.span_start / fx.span_end (date)
+    - fx.padens / fx.lutheps / fx.nyinaks / fx.yenkongs (colecciones con len())
+    - fx.group_map() devuelve dict[str, set[date]]
+    """
     span_start: date
     span_end: date
-    padens: frozenset[date]
-    lutheps: frozenset[date]
-    nyinaks: frozenset[date]
-    yenkongs: frozenset[date]
+    groups: Dict[str, Set[date]] = field(default_factory=dict)
+    meta: Dict[str, str] = field(default_factory=dict)
 
-    def all_dates(self) -> frozenset[date]:
-        return frozenset(set(self.padens) | set(self.lutheps) | set(self.nyinaks) | set(self.yenkongs))
+    # Accesos “cómodos” exigidos por los tests:
+    @property
+    def padens(self) -> Set[date]:
+        return self.groups.get("padens", set())
 
-    def group_map(self) -> dict[str, frozenset[date]]:
-        return {
-            "padens": self.padens,
-            "lutheps": self.lutheps,
-            "nyinaks": self.nyinaks,
-            "yenkongs": self.yenkongs,
-        }
+    @property
+    def lutheps(self) -> Set[date]:
+        return self.groups.get("lutheps", set())
+
+    @property
+    def nyinaks(self) -> Set[date]:
+        return self.groups.get("nyinaks", set())
+
+    @property
+    def yenkongs(self) -> Set[date]:
+        return self.groups.get("yenkongs", set())
+
+    def group_map(self) -> Dict[str, Set[date]]:
+        # Los tests usan isdisjoint(), eso existe en set.
+        return self.groups
 
 
-def _parse_span(raw: str) -> tuple[date, date]:
+def _strip_quotes(v: str) -> str:
+    v = v.strip()
+    if (v.startswith('"') and v.endswith('"')) or (v.startswith("'") and v.endswith("'")):
+        return v[1:-1]
+    return v
+
+
+def parse_fixture_text(text: str) -> Fixture:
     """
-    Formato esperado (según fixture actual):
-      2025-03-01_to_2026-02-28
+    Parser simple (sin PyYAML) para fixtures con forma:
+
+        year_span: "YYYY-MM-DD_to_YYYY-MM-DD"   (metadata a nivel raíz, opcional)
+
+        padens:
+          - 2025-03-09
+          - 2025-03-21
+        lutheps:
+          - 2025-02-05
+
+    Ignora:
+    - líneas vacías
+    - comentarios que empiecen con '#'
+    - BOM (\\ufeff)
     """
-    if "_to_" not in raw:
-        raise FixtureParseError(f"year_span no contiene '_to_': {raw!r}")
-    a, b = raw.split("_to_", 1)
-    a = a.strip()
-    b = b.strip()
-    if not (_ISO_DATE_RE.match(a) and _ISO_DATE_RE.match(b)):
-        raise FixtureParseError(f"year_span no tiene fechas ISO: {raw!r}")
-    return date.fromisoformat(a), date.fromisoformat(b)
+    meta: Dict[str, str] = {}
+    tmp_groups: Dict[str, list[date]] = {}
+    current: Optional[str] = None
 
+    for raw in text.splitlines():
+        line = raw.lstrip("\ufeff").rstrip("\r\n")
 
-def parse_fixture_text(text: str) -> SkylightFixture:
-    """
-    Parser mínimo para el fixture YAML-like.
-    Soporta:
-      - comentarios con '#'
-      - claves: year_span, padens, lutheps, nyinaks, yenkongs
-      - listas con '- YYYY-MM-DD'
-    """
-    span_start: date | None = None
-    span_end: date | None = None
-
-    buckets: dict[str, list[date]] = {"padens": [], "lutheps": [], "nyinaks": [], "yenkongs": []}
-    current: str | None = None
-
-    for raw_line in text.splitlines():
-        line = raw_line.split("#", 1)[0].rstrip()
+        # vacías
         if not line.strip():
             continue
 
-        m_span = _YEAR_SPAN_RE.match(line)
-        if m_span:
-            span_raw = m_span.group(1).strip()
-            span_start, span_end = _parse_span(span_raw)
-            current = None
+        # comentarios
+        if line.lstrip().startswith("#"):
             continue
 
-        m_key = _KEY_RE.match(line)
-        if m_key:
-            key = m_key.group(1).strip()
-            if key in buckets:
-                current = key
-            else:
-                current = None  # ignoramos otras claves
+        # grupo: "padens:"
+        m = _GROUP_RE.match(line)
+        if m:
+            current = m.group(1)
+            if current in tmp_groups:
+                raise FixtureParseError(f"Grupo duplicado '{current}'.")
+            tmp_groups[current] = []
             continue
 
-        m_date = _DATE_RE.match(line)
-        if m_date:
+        # item: "- 2025-03-09"
+        m = _ITEM_RE.match(line)
+        if m:
             if not current:
-                # Fecha fuera de lista conocida -> ignoramos
-                continue
-            d = date.fromisoformat(m_date.group(1))
-            buckets[current].append(d)
+                raise FixtureParseError("Item de lista encontrado antes de un grupo (key:).")
+            s = m.group(1)
+            try:
+                d = date.fromisoformat(s)
+            except ValueError as e:
+                raise FixtureParseError(f"Fecha inválida: '{s}'") from e
+            tmp_groups[current].append(d)
             continue
 
-    if span_start is None or span_end is None:
-        raise FixtureParseError("No se pudo leer year_span del fixture.")
+        # metadata raíz: "year_span: ...", SOLO si todavía no estamos dentro de un grupo
+        m = _META_RE.match(line)
+        if m and current is None:
+            k = m.group(1)
+            v = _strip_quotes(m.group(2))
+            meta[k] = v
+            continue
 
-    fx = SkylightFixture(
-        span_start=span_start,
-        span_end=span_end,
-        padens=tuple(buckets["padens"]),
-        lutheps=tuple(buckets["lutheps"]),
-        nyinaks=tuple(buckets["nyinaks"]),
-        yenkongs=tuple(buckets["yenkongs"]),
-    )
-    _validate_fixture(fx)
-    return fx
+        raise FixtureParseError(f"Línea no reconocida en fixture: {raw!r}")
 
+    # Convertimos a sets y validamos duplicados por grupo
+    groups: Dict[str, Set[date]] = {}
+    for g, lst in tmp_groups.items():
+        if len(lst) != len(set(lst)):
+            raise FixtureParseError(f"Duplicados detectados en '{g}'.")
+        groups[g] = set(lst)
 
-def _validate_sorted_unique(name: str, dates: Iterable[date]) -> None:
-    lst = list(dates)
-    if len(lst) != len(set(lst)):
-        raise FixtureParseError(f"Duplicados detectados en '{name}'.")
-    if lst != sorted(lst):
-        raise FixtureParseError(f"Fechas no ordenadas ascendentemente en '{name}'.")
+    # span_start/span_end: preferimos year_span si está
+    if "year_span" in meta:
+        m = _SPAN_RE.match(meta["year_span"])
+        if not m:
+            raise FixtureParseError(
+                f"year_span inválido: {meta['year_span']!r} (esperado YYYY-MM-DD_to_YYYY-MM-DD)"
+            )
+        span_start = date.fromisoformat(m.group(1))
+        span_end = date.fromisoformat(m.group(2))
+    else:
+        # fallback: min/max de todas las fechas
+        all_dates = [d for s in groups.values() for d in s]
+        if not all_dates:
+            raise FixtureParseError("Fixture vacío (sin year_span y sin fechas).")
+        span_start = min(all_dates)
+        span_end = max(all_dates)
 
-
-def _validate_fixture(fx: SkylightFixture) -> None:
-    if fx.span_end < fx.span_start:
-        raise FixtureParseError("year_span inválido: end < start")
-
-    # Valida rangos, orden y duplicados
-    for group, dates in fx.group_map().items():
-        _validate_sorted_unique(group, dates)
-        for d in dates:
-            if not (fx.span_start <= d <= fx.span_end):
-                raise FixtureParseError(f"Fecha fuera de year_span: {group}: {d}")
-
-    # Valida que no haya overlaps entre grupos
-    gm = fx.group_map()
-    keys = list(gm.keys())
-    for i, a in enumerate(keys):
-        for b in keys[i + 1 :]:
-            inter = gm[a].intersection(gm[b])
-            if inter:
-                sample = ", ".join(sorted(str(x) for x in list(inter)[:5]))
-                raise FixtureParseError(f"Overlaps entre '{a}' y '{b}': {sample}")
+    return Fixture(span_start=span_start, span_end=span_end, groups=groups, meta=meta)
 
 
-def default_fixture_path() -> Path:
+def load_fixture(fixture_path: Path) -> Fixture:
+    # utf-8-sig elimina BOM si existe
+    text = fixture_path.read_text(encoding="utf-8-sig", errors="replace")
+    return parse_fixture_text(text)
+
+
+@lru_cache(maxsize=16)
+def _cached_load_fixture(path_str: str) -> Fixture:
+    return load_fixture(Path(path_str))
+
+
+def classify_date(d: date, *, fixture_path: Path) -> str:
     """
-    Heurística para encontrar el fixture cuando se corre desde el repo.
+    Devuelve la etiqueta esperada por tests:
+    - 'padens' -> 'paden'
+    - 'lutheps' -> 'luthep'
+    - 'nyinaks' -> 'nyinak'
+    - 'yenkongs' -> 'yenkong'
     """
-    here = Path(__file__).resolve()
-    repo_root = here.parents[2]  # .../src/engines/file.py -> .../repo
-    candidate = repo_root / "tests" / "calendario" / "skylight-arches-2025-2026.yml"
-    return candidate
+    fx = _cached_load_fixture(str(fixture_path))
 
-
-@lru_cache(maxsize=4)
-def load_fixture(path: str | Path | None = None) -> SkylightFixture:
-    p = Path(path) if path is not None else default_fixture_path()
-    if not p.exists():
-        raise FileNotFoundError(f"Fixture no encontrado: {p}")
-    return parse_fixture_text(p.read_text(encoding="utf-8", errors="ignore"))
-
-
-def classify_date(d: date, *, fixture_path: str | Path | None = None) -> str | None:
-    """
-    Retorna: 'paden' | 'luthep' | 'nyinak' | 'yenkong' | None
-    (singular, por convención externa; el fixture está en plural)
-
-    Si la fecha está fuera del year_span del fixture, retorna None.
-    """
-    fx = load_fixture(fixture_path)
-    if d < fx.span_start or d > fx.span_end:
+    hits = [g for g, ds in fx.group_map().items() if d in ds]
+    if not hits:
         return None
+    if len(hits) > 1:
+        raise ValueError(f"La fecha {d.isoformat()} aparece en múltiples grupos: {hits}")
 
-    if d in fx.padens:
-        return "paden"
-    if d in fx.lutheps:
-        return "luthep"
-    if d in fx.nyinaks:
-        return "nyinak"
-    if d in fx.yenkongs:
-        return "yenkong"
-    return None
+    g = hits[0]
+    return g[:-1] if g.endswith("s") else g
